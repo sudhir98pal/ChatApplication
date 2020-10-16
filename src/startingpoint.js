@@ -17,18 +17,26 @@ server.listen(port, () => {
     console.log(chalk.greenBright.underline('Sever is Running on port ' + port))
 })
 
-let count = 0;
-io.on('connection', (socket) => {
+//let count = 0;
+io.on('connection', (socket) => 
+{
     console.log('new websocket connection');
+    socket.emit('message',"Welcome user ");
+    socket.on('sendMessage',(inputMessage)=>
+    {
+        io.emit('message',inputMessage)
+    });
     // socket.emit('countUpdated', count) it emits to single client
     // it emits to every single client connected to this socket
 
-    socket.on('increament', () => {
+    // socket.on('increament', () =>
+    //  {
         
     
-        count++;
-        console.log('counthasbeen updated! to ' + count);
-        io.emit('countUpdated', count)
-        
-    })
+    //     count++;
+    //     console.log('counthasbeen updated! to ' + count);
+    //     io.emit('countUpdated', count)
+
+    // })
+
 })
