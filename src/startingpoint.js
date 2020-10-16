@@ -29,5 +29,6 @@ io.on('connection', (socket) => {
         count++;
         console.log('counthasbeen updated! to ' + count);
         io.emit('countUpdated', count)
+        
     })
 })
