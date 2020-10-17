@@ -22,6 +22,8 @@ io.on('connection', (socket) =>
 {
     console.log('new websocket connection');
     socket.emit('message',"Welcome user ");
+    socket.broadcast.emit('message',"A new user joined chat Room");
+    // broadcast.emit will send message to all client connected to this socket except one who joined recently.
     socket.on('sendMessage',(inputMessage)=>
     {
         io.emit('message',inputMessage)
@@ -38,5 +40,19 @@ io.on('connection', (socket) =>
     //     io.emit('countUpdated', count)
 
     // })
+
+
+    socket.on('disconnect',()=>
+    {
+        io.emit('message','User left the chat Room');
+    })
+
+
+    // receiving Geoloaction
+    socket.on('shareLocation',(location)=>
+    {
+       const GoogleMap='https://www.google.com/maps?q=';
+io.emit('message',GoogleMap+location.latitude+','+location.longitude);
+    })
 
 })
