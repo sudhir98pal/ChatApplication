@@ -13,7 +13,9 @@ socket.on('message',(message)=>
 document.querySelector('#messageOfForm').addEventListener('submit',(event)=>
 {
     event.preventDefault(); // to prevents page from refreshing
-    const inputMessage=document.querySelector('input').value;
+    //const inputMessage=document.querySelector('input').value;
+    const inputMessage=event.target.elements.input_message.value;
+    // this will help to avoid crashing if there are more (form input) on client side
     socket.emit('sendMessage',inputMessage);
 })
 
