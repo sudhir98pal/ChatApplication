@@ -24,9 +24,10 @@ io.on('connection', (socket) =>
     socket.emit('message',"Welcome user ");
     socket.broadcast.emit('message',"A new user joined chat Room");
     // broadcast.emit will send message to all client connected to this socket except one who joined recently.
-    socket.on('sendMessage',(inputMessage)=>
+    socket.on('sendMessage',(inputMessage,callback)=>
     {
         io.emit('message',inputMessage)
+        callback('sudhir pal');
     });
     // socket.emit('countUpdated', count) it emits to single client
     // it emits to every single client connected to this socket

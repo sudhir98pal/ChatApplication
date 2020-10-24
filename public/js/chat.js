@@ -14,7 +14,13 @@ document.querySelector('#messageOfForm').addEventListener('submit', (event) => {
     //const inputMessage=document.querySelector('input').value;
     const inputMessage = event.target.elements.input_message.value;
     // this will help to avoid crashing if there are more (form input) on client side
-    socket.emit('sendMessage', inputMessage);
+    socket.emit('sendMessage', inputMessage,
+    (messagebackfromserver)=>
+    {
+        console.log('Message was Delivered',messagebackfromserver);
+    }
+
+    );
 })
 
 //listening to server by socket.on
