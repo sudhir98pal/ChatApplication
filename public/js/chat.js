@@ -29,7 +29,7 @@ const $messages = document.querySelector('#messages')
 // Templates start **************************************
 
 const messageTemplate = document.querySelector('#message-template').innerHTML;
-
+const locationTemplate = document.querySelector('#location-template').innerHTML;
 
 //Templates end *****************************************
 
@@ -38,12 +38,23 @@ const messageTemplate = document.querySelector('#message-template').innerHTML;
 
 socket.on('message', (message) => {
     console.log(message);
-       const html = Mustache.render(messageTemplate,{
-           message:message
-       });
+    const html = Mustache.render(messageTemplate, {
+        message: message
+    });
     $messages.insertAdjacentHTML('beforeend', html);
 })
 
+socket.on('sharingLocation', (url) => {
+    console.log(url);
+    const Url = Mustache.render(locationTemplate,
+        {
+            locationMessage: 'My current Location',
+            location: url
+        })
+    $messages.insertAdjacentHTML('beforeend', Url);
+
+
+})
 
 
 $messageForm.addEventListener('submit', (event) => {

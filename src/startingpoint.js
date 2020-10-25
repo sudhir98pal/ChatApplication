@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
     socket.on('shareLocation', (location,callback) => {
         const GoogleMap = 'https://www.google.com/maps?q=';
         callback('Your Location shared !')
-        io.emit('message', GoogleMap + location.latitude + ',' + location.longitude);
+        io.emit('sharingLocation', GoogleMap + location.latitude + ',' + location.longitude);
     })
 
 })
