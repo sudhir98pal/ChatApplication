@@ -6,7 +6,8 @@ const port = process.env.PORT || 3000
 const path = require('path');
 const socketio = require('socket.io');
 const Filter = require('bad-words')
-const {generateMessage}=require('./utils/messages')
+const { generateMessage } = require('./utils/messages')
+const { generateLocationMessage } = require('./utils/location')
 // destructuring object
 
 const server = http.createServer(app);
@@ -20,16 +21,15 @@ server.listen(port, () => {
     console.log(chalk.greenBright.underline('Sever is Running on port ' + port))
 })
 
-io.on('connection', (socket) => 
-{
+io.on('connection', (socket) => {
     console.log('new websocket connection');
     socket.emit('message', generateMessage("Welcome user"));
     socket.broadcast.emit('message', generateMessage("A new user joined chat Room"));
     const filter = new Filter(); // to remove bad words
     // broadcast.emit will send message to all client connected to this socket except one who joined recently.
-    socket.on('sendMessage', (inputMessage, callback) =>
-     {
-        io.emit('message', generateMessage( filter.clean(inputMessage) ) )
+    socket.on('sendMessage', (inputMessage, callback) => {
+        filter.addWords('chutiye', 'chutiya', 'mc','bc','saale');
+        io.emit('message', generateMessage(filter.clean(inputMessage)))
         callback('sudhir pal');
     });
     // socket.emit('countUpdated', count) it emits to single client
@@ -52,11 +52,10 @@ io.on('connection', (socket) =>
 
 
     // receiving Geoloaction
-    socket.on('shareLocation', (location,callback) => 
-    {
+    socket.on('shareLocation', (location, callback) => {
         const GoogleMap = 'https://www.google.com/maps?q=';
         callback('Your Location shared !')
-        io.emit('sharingLocation', GoogleMap + location.latitude + ',' + location.longitude);
+        io.emit('sharingLocation', generateLocationMessage(GoogleMap + location.latitude + ',' + location.longitude));
     })
 
 })

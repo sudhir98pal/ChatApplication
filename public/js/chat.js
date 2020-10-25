@@ -42,7 +42,7 @@ socket.on('message', (message) => {
     console.log(message);
   const fromatedMessage={
     message: message.message,
-    createdAt: moment(message.createdAt).format('h:mm:ss')
+    createdAt: moment(message.createdAt).format('h:mm:ss A')
     // moment library is loaded in script tag in index.html
 
   }
@@ -53,12 +53,14 @@ socket.on('message', (message) => {
 
 })
 
-socket.on('sharingLocation', (url) => {
+socket.on('sharingLocation', (url) => 
+{
     console.log(url);
     const Url = Mustache.render(locationTemplate,
         {
             locationMessage: 'My current Location',
-            location: url
+            location: url.message,
+            createdAt:moment(url.createdAt).format('h:mm:ss A')
         })
     $messages.insertAdjacentHTML('beforeend', Url);
 

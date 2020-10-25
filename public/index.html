@@ -2,35 +2,59 @@
 <html>
 
 <head>
-
+    <title> Chat App</title>
+    <link rel="icon" href="./img/icon.jpg">
+    <link rel="stylesheet" href="./css/styles.min.css">
 </head>
 
 <body>
-    Chat App
-    <br>
 
-    <div id="messages"> </div>
-    <form spellcheck="false" id='messageOfForm'>
-        <input name="input_message" placeholder="Enter Your Message">
-        <br>
-        <br>
-        <button>
-            Send Message
-        </button>
-    </form>
+    <div class="chat">
+        <div class="chat__sidebar">
+
+        </div>
+
+        <div class="chat__main">
+            <div id="messages" class="chat__messages">
+
+            </div>
+
+            <div class="compose">
+                <form spellcheck="false" id='messageOfForm'>
+                    <input name="input_message" placeholder="Enter Your Message">
+                    <br>
+                    <br>
+                    <button>
+                        Send Message
+                    </button>
+                </form>
+                <br>
+                <br>
+            </div>
+            <button id="shareLocationButton" type="html/text">Share Your Location</button>
+        </div>
+    </div>
 
 
 
 
-    <br>
-    <br>
-    <button id="shareLocationButton" type="html/text">Share Your Location</button>
+
+
+
     <script id="message-template" type="text/html">
 
-        <div>
+        <div class="message">
             <p>
-                {{ message }}
+
                 <br>
+                <p class="message__name">
+                    Some user Name
+                </p>
+                {{ message }}
+               
+            </p>
+            <p class="message__meta">
+                
                 {{ createdAt }}
             </p>
         </div>
@@ -38,10 +62,16 @@
     <script id="location-template" type="url">
 
         <div>
+            <p class="message__name">
+                Some user Name
+            </p>
             <p>
             <a href={{ location }} target="_blank">
                 {{ locationMessage }}
+                <br>
+               
             </a>
+            {{ createdAt }}
             <p>
         </div>
     </script>
@@ -52,9 +82,9 @@
     <script src='socket.io/socket.io.js'></script>
     <script src='js/chat.js'></script>
 
-    <p>
-    <p>Created By Sudhir Pal</p>
-    <p>Gmail: sudhirnandlalpal@gmail.com</p>
+    <p style="text-align:center">
+    <p style="text-align:center">Created By Sudhir Pal</p>
+    <p style="text-align:center">Gmail: sudhirnandlalpal@gmail.com</p>
 
     </p>
 
