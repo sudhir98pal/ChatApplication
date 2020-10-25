@@ -1,5 +1,7 @@
 
 
+
+
 const socket = io();
 // accessing socket from sever on client side
 
@@ -38,10 +40,17 @@ const locationTemplate = document.querySelector('#location-template').innerHTML;
 
 socket.on('message', (message) => {
     console.log(message);
-    const html = Mustache.render(messageTemplate, {
-        message: message
-    });
+  const fromatedMessage={
+    message: message.message,
+    createdAt: moment(message.createdAt).format('h:mm:ss')
+    // moment library is loaded in script tag in index.html
+
+  }
+    const html = Mustache.render(messageTemplate,fromatedMessage);
+
+
     $messages.insertAdjacentHTML('beforeend', html);
+
 })
 
 socket.on('sharingLocation', (url) => {
