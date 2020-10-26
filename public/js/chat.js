@@ -163,4 +163,8 @@ $shareLocationButton.addEventListener('click', (e) => {
 
 console.log(userName);
 console.log(chatRoom);
-socket.emit('join', { userName, chatRoom })
+socket.emit('join', { userName, chatRoom },(error)=>
+{
+    return alert(error)
+})
+

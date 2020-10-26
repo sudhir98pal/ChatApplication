@@ -44,11 +44,12 @@ const addUser = ({ id, userName, chatRoom }) => {
 }
 
 
-const removeUser = (id) => {
+const removeUser=(id) => {
 
-    const pos = users.find((user) => { return user.id == id; })
+    const pos = users.findIndex((user) => { return user.id == id; })
+ 
     if (pos != -1) {
-        return users.slice(pos, 1)[0]
+        return users.splice(pos, 1)[0]
         // 1 => remove one item starting from pos in array
         // it returns an array of user removed thus use [0] to return first element to be returned
     }
@@ -79,24 +80,13 @@ const getUsersInRoom = (chatRoom) => {
 
 }
 
-const user = {
-    id: 1,
-    userName: 'sudhir pal',
-    chatRoom: 'code'
+
+
+module.exports={
+    addUser,
+    removeUser,
+    getUser,
+    getUsersInRoom
 }
-const user2 = {
-    id: 2,
-    userName: 'sonam',
-    chatRoom: 'code'
-}
-const user3 = {
-    id: 3,
-    userName: 'shushil pal',
-    chatRoom: 'coding'
-}
-console.log(addUser(user2));
-console.log(addUser(user));
-console.log(addUser(user3));
-console.log(users)
-console.log(getUsersInRoom('code'))
+
 
