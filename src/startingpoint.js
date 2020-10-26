@@ -9,7 +9,6 @@ const Filter = require('bad-words')
 const { generateMessage } = require('./utils/messages')
 const { generateLocationMessage } = require('./utils/location')
 // destructuring object
-
 const server = http.createServer(app);
 const io = socketio(server);// simply socketio() will not work thus we need socketio(server)
 // now our server supports websockets
@@ -23,27 +22,26 @@ server.listen(port, () => {
 
 io.on('connection', (socket) => {
     console.log('new websocket connection');
-    socket.emit('message', generateMessage("Welcome user"));
-    socket.broadcast.emit('message', generateMessage("A new user joined chat Room"));
+
     const filter = new Filter(); // to remove bad words
     // broadcast.emit will send message to all client connected to this socket except one who joined recently.
-    socket.on('sendMessage', (inputMessage, callback) => {
-        filter.addWords('chutiye', 'chutiya', 'mc','bc','saale');
+
+    socket.on('join', ({ userName, chatRoom }) => {
+
+        socket.join(chatRoom);
+        console.log(userName);
+        console.log(chatRoom);
+        socket.emit('message', generateMessage("Welcome "+userName+" !"));
+        socket.broadcast.to(chatRoom).emit('message', generateMessage(userName + ' Has Joined !'));
+
+    })
+    socket.on('sendMessage', (inputMessage, callback) =>
+     {
+        filter.addWords('chutiye', 'chutiya', 'mc', 'bc', 'saale');
         io.emit('message', generateMessage(filter.clean(inputMessage)))
         callback('sudhir pal');
     });
-    // socket.emit('countUpdated', count) it emits to single client
-    // it emits to every single client connected to this socket
 
-    // socket.on('increament', () =>
-    //  {
-
-
-    //     count++;
-    //     console.log('counthasbeen updated! to ' + count);
-    //     io.emit('countUpdated', count)
-
-    // })
 
 
     socket.on('disconnect', () => {
@@ -57,5 +55,8 @@ io.on('connection', (socket) => {
         callback('Your Location shared !')
         io.emit('sharingLocation', generateLocationMessage(GoogleMap + location.latitude + ',' + location.longitude));
     })
+
+
+
 
 })

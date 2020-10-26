@@ -24,7 +24,38 @@ const $messages = document.querySelector('#messages')
 
 //Elements end ********************************
 
+// functions start*************************************
 
+const capitalize = (name) => // Capitalize first letter of each word in name
+{
+    let newName = '';
+    newName += name.charAt(0).toUpperCase();
+
+    let i = 1;
+    while (true) {
+        while (i < name.length && name[i] != ' ') {
+            newName += name[i];
+            i++;
+        }
+        if (i == name.length) return newName;
+
+        newName += name[i];
+        i++// skipping space
+
+        newName += name.charAt(i).toUpperCase();
+        i++;
+        while (i < name.length && name[i] != ' ') {
+            newName += name[i];
+            i++;
+        }
+        if (i == name.length) return newName;
+
+    }
+
+}
+
+
+//function  end ******************************************
 
 
 
@@ -37,30 +68,41 @@ const locationTemplate = document.querySelector('#location-template').innerHTML;
 
 
 
+//Options start **********************
+
+let { userName, chatRoom } = Qs.parse(location.search, { ignoreQueryPrefix: true });
+userName = capitalize(userName)
+
+//Options end *************************
+
+
+
+
+
+
 
 socket.on('message', (message) => {
     console.log(message);
-  const fromatedMessage={
-    message: message.message,
-    createdAt: moment(message.createdAt).format('h:mm:ss A')
-    // moment library is loaded in script tag in index.html
+    const fromatedMessage = {
+        message: message.message,
+        createdAt: moment(message.createdAt).format('h:mm:ss A')
+        // moment library is loaded in script tag in index.html
 
-  }
-    const html = Mustache.render(messageTemplate,fromatedMessage);
+    }
+    const html = Mustache.render(messageTemplate, fromatedMessage);
 
 
     $messages.insertAdjacentHTML('beforeend', html);
 
 })
 
-socket.on('sharingLocation', (url) => 
-{
+socket.on('sharingLocation', (url) => {
     console.log(url);
     const Url = Mustache.render(locationTemplate,
         {
             locationMessage: 'My current Location',
             location: url.message,
-            createdAt:moment(url.createdAt).format('h:mm:ss A')
+            createdAt: moment(url.createdAt).format('h:mm:ss A')
         })
     $messages.insertAdjacentHTML('beforeend', Url);
 
@@ -118,3 +160,7 @@ $shareLocationButton.addEventListener('click', (e) => {
     })
 
 })
+
+console.log(userName);
+console.log(chatRoom);
+socket.emit('join', { userName, chatRoom })
