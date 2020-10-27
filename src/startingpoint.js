@@ -62,7 +62,8 @@ server.listen(port, () => {
     console.log(chalk.greenBright.underline('Sever is Running on port ' + port))
 })
 
-io.on('connection', (socket) => {
+io.on('connection', (socket) => 
+{
     console.log('new websocket connection');
 
     const filter = new Filter(); // to remove bad words
@@ -79,16 +80,18 @@ io.on('connection', (socket) => {
         }
 
 
-        socket.emit('message', generateMessage("Welcome " + capitalize(newUser.userName) + " !"));
-        socket.broadcast.to(chatRoom).emit('message', generateMessage(capitalize(newUser.userName) + ' Has Joined !'));
+        socket.emit('message', generateMessage(capitalize(newUser.userName),"Welcome " + capitalize(newUser.userName) + " !"));
+        socket.broadcast.to(chatRoom).emit('message', generateMessage(capitalize(newUser.userName),capitalize(newUser.userName) + ' Has Joined !'));
         callback() // all ok no error
 
 
 
     })
-    socket.on('sendMessage', (inputMessage, callback) => {
+    socket.on('sendMessage', (inputMessage, callback) => 
+    {
         filter.addWords('chutiye', 'chutiya', 'mc', 'bc', 'saale');
-        io.emit('message', generateMessage(filter.clean(inputMessage)))
+        const currentUser=getUser(socket.id);
+        io.to(currentUser.chatRoom).emit('message', generateMessage(capitalize(newUser.userName),filter.clean(inputMessage)))
         callback('sudhir pal');
     });
 
@@ -98,17 +101,19 @@ io.on('connection', (socket) => {
         const newUser=removeUser(socket.id)
         if(newUser.userName)
         {
-            io.emit('message', generateMessage(capitalize(newUser.userName)+' Left The' +capitalize(newUser.userName)))
+            io.to(newUser.chatRoom).emit('message', generateMessage(capitalize(newUser.userName),capitalize(newUser.userName)+' Left The ' +capitalize(newUser.chatRoom)+' chatRoom'))
         }
         
     })
 
 
     // receiving Geoloaction
-    socket.on('shareLocation', (location, callback) => {
+    socket.on('shareLocation', (location, callback) => 
+    {
+        const currentUser=getUser(socket.id);
         const GoogleMap = 'https://www.google.com/maps?q=';
         callback('Your Location shared !')
-        io.emit('sharingLocation', generateLocationMessage(GoogleMap + location.latitude + ',' + location.longitude));
+        io.to(currentUser.chatRoom).emit('sharingLocation', generateLocationMessage(capitalize(currentUser.userName),GoogleMap + location.latitude + ',' + location.longitude));
     })
 
 

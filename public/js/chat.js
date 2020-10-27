@@ -81,12 +81,15 @@ userName = capitalize(userName)
 
 
 
-socket.on('message', (message) => {
+socket.on('message', (message) => 
+{
     console.log(message);
     const fromatedMessage = {
         message: message.message,
-        createdAt: moment(message.createdAt).format('h:mm:ss A')
-        // moment library is loaded in script tag in index.html
+        createdAt: moment(message.createdAt).format('h:mm:ss A'),
+         // moment library is loaded in script tag in index.html
+        userName:message.userName
+       
 
     }
     const html = Mustache.render(messageTemplate, fromatedMessage);
@@ -96,13 +99,15 @@ socket.on('message', (message) => {
 
 })
 
-socket.on('sharingLocation', (url) => {
+socket.on('sharingLocation', (url) =>
+ {
     console.log(url);
     const Url = Mustache.render(locationTemplate,
         {
             locationMessage: 'My current Location',
             location: url.message,
-            createdAt: moment(url.createdAt).format('h:mm:ss A')
+            createdAt: moment(url.createdAt).format('h:mm:ss A'),
+            userName:url.userName
         })
     $messages.insertAdjacentHTML('beforeend', Url);
 
@@ -170,6 +175,6 @@ socket.emit('join', { userName, chatRoom },(error)=>
         alert(error);
         location='/' //moving to root of the page(Back To Joining Page)
     }
-    
+
 })
 
