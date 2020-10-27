@@ -89,8 +89,12 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', (inputMessage, callback) => {
         filter.addWords('chutiye', 'chutiya', 'mc', 'bc', 'saale');
         const currentUser = getUser(socket.id);
-        io.to(currentUser.chatRoom).emit('message', generateMessage(capitalize(currentUser.userName), filter.clean(inputMessage)))
-        callback('sudhir pal');
+        if(currentUser)
+        {
+            io.to(currentUser.chatRoom).emit('message', generateMessage(capitalize(currentUser.userName), filter.clean(inputMessage)))
+            callback('sudhir pal');
+        }
+       
     });
 
 
