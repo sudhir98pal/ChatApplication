@@ -165,6 +165,11 @@ console.log(userName);
 console.log(chatRoom);
 socket.emit('join', { userName, chatRoom },(error)=>
 {
-    return alert(error)
+    if(error)
+    {
+        alert(error);
+        location='/' //moving to root of the page(Back To Joining Page)
+    }
+    
 })
 

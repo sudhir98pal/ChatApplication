@@ -80,8 +80,8 @@ io.on('connection', (socket) => {
 
 
         socket.emit('message', generateMessage("Welcome " + capitalize(newUser.userName) + " !"));
-        socket.broadcast.to(chatRoom).emit('message', generateMessage(newUser.userName + ' Has Joined !'));
-        callback('Join Successfully') // all ok no error
+        socket.broadcast.to(chatRoom).emit('message', generateMessage(capitalize(newUser.userName) + ' Has Joined !'));
+        callback() // all ok no error
 
 
 
@@ -95,10 +95,10 @@ io.on('connection', (socket) => {
 
 
     socket.on('disconnect', () => {
-        const user=removeUser(socket.id)
-        if(user)
+        const newUser=removeUser(socket.id)
+        if(newUser.userName)
         {
-            io.emit('message', generateMessage(capitalize(user.userName)+' left the chat Room'));
+            io.emit('message', generateMessage(capitalize(newUser.userName)+' Left The' +capitalize(newUser.userName)))
         }
         
     })
