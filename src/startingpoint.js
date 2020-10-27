@@ -107,9 +107,13 @@ io.on('connection', (socket) => {
     // receiving Geoloaction
     socket.on('shareLocation', (location, callback) => {
         const currentUser = getUser(socket.id);
-        const GoogleMap = 'https://www.google.com/maps?q=';
-        callback('Your Location shared !')
-        io.to(currentUser.chatRoom).emit('sharingLocation', generateLocationMessage(capitalize(currentUser.userName), GoogleMap + location.latitude + ',' + location.longitude));
+        if(currentUser)
+        {
+            const GoogleMap = 'https://www.google.com/maps?q=';
+            callback('Your Location shared !')
+            io.to(currentUser.chatRoom).emit('sharingLocation', generateLocationMessage(capitalize(currentUser.userName), GoogleMap + location.latitude + ',' + location.longitude));
+        }
+   
     })
 
 
