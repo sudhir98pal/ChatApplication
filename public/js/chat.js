@@ -2,6 +2,7 @@
 
 
 
+
 const socket = io();
 // accessing socket from sever on client side
 
@@ -20,7 +21,7 @@ const $ButtonOfMessageForm = $messageForm.querySelector('button')
 const $shareLocationButton = document.querySelector('#shareLocationButton')
 
 const $messages = document.querySelector('#messages')
-const $chatSidebars=document.querySelector('#sidebar')
+const $chatSidebars = document.querySelector('#sidebar')
 
 
 //Elements end ********************************
@@ -64,7 +65,7 @@ const capitalize = (name) => // Capitalize first letter of each word in name
 
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const locationTemplate = document.querySelector('#location-template').innerHTML;
-const sidebarTemplate=document.querySelector('#sidebar_template').innerHTML;
+const sidebarTemplate = document.querySelector('#sidebar_template').innerHTML;
 
 //Templates end *****************************************
 
@@ -79,53 +80,79 @@ userName = capitalize(userName)
 
 
 
+const autoScroll = () => {
+    // new message elemet
+    const $newMessages = $messages.lastElementChild;
+
+    // style of new element
+    const newMessagesStyles = getComputedStyle($newMessages);
+    const newMeassageMargin = parseInt(newMessagesStyles.marginBottom);
+
+    // hight of new element
+    const newMessagesHeight = $newMessages.offsetHeight + newMeassageMargin;
+
+    // visible height
+    const visibleHeight = $messages.offsetHeight;
+
+
+    // container height
+    const containerHeight = $messages.scrollHeight;
+
+
+    // how far i have scrolled
+
+    const scrolloffset = $messages.scrollTop + visibleHeight;
+
+    if (containerHeight - newMessagesHeight <= scrolloffset) {
+        $messages.scrollTop = $messages.scrollHeight;
+    }
+
+}
 
 
 
+socket.on('message', (message) => {
 
-socket.on('message', (message) => 
-{
-    
     const fromatedMessage = {
         message: message.message,
         createdAt: moment(message.createdAt).format('h:mm:ss A'),
-         // moment library is loaded in script tag in index.html
-        userName:message.userName
-       
+        // moment library is loaded in script tag in index.html
+        userName: message.userName
+
 
     }
     const html = Mustache.render(messageTemplate, fromatedMessage);
 
 
     $messages.insertAdjacentHTML('beforeend', html);
+      autoScroll();
 
 })
 
-socket.on('sharingLocation', (url) =>
- {
+socket.on('sharingLocation', (url) => {
     console.log(url);
     const Url = Mustache.render(locationTemplate,
         {
             locationMessage: 'My current Location',
             location: url.message,
             createdAt: moment(url.createdAt).format('h:mm:ss A'),
-            userName:url.userName
+            userName: url.userName
         })
     $messages.insertAdjacentHTML('beforeend', Url);
 
+     autoScroll();
 
 })
 
 
-socket.on('listOfUsersInRoom',({chatRoom,users})=>
-{
+socket.on('listOfUsersInRoom', ({ chatRoom, users }) => {
 
-    const html = Mustache.render(sidebarTemplate,{
+    const html = Mustache.render(sidebarTemplate, {
         chatRoom,
         users
     });
 
-    $chatSidebars.innerHTML= html;
+    $chatSidebars.innerHTML = html;
 })
 
 
@@ -182,12 +209,10 @@ $shareLocationButton.addEventListener('click', (e) => {
 
 console.log(userName);
 console.log(chatRoom);
-socket.emit('join', { userName, chatRoom },(error)=>
-{
-    if(error)
-    {
+socket.emit('join', { userName, chatRoom }, (error) => {
+    if (error) {
         alert(error);
-        location='/' //moving to root of the page(Back To Joining Page)
+        location = '/' //moving to root of the page(Back To Joining Page)
     }
 
 })
