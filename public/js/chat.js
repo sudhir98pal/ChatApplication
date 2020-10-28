@@ -20,6 +20,7 @@ const $ButtonOfMessageForm = $messageForm.querySelector('button')
 const $shareLocationButton = document.querySelector('#shareLocationButton')
 
 const $messages = document.querySelector('#messages')
+const $chatSidebars=document.querySelector('#sidebar')
 
 
 //Elements end ********************************
@@ -63,6 +64,7 @@ const capitalize = (name) => // Capitalize first letter of each word in name
 
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const locationTemplate = document.querySelector('#location-template').innerHTML;
+const sidebarTemplate=document.querySelector('#sidebar_template').innerHTML;
 
 //Templates end *****************************************
 
@@ -83,7 +85,7 @@ userName = capitalize(userName)
 
 socket.on('message', (message) => 
 {
-    console.log(message);
+    
     const fromatedMessage = {
         message: message.message,
         createdAt: moment(message.createdAt).format('h:mm:ss A'),
@@ -112,6 +114,18 @@ socket.on('sharingLocation', (url) =>
     $messages.insertAdjacentHTML('beforeend', Url);
 
 
+})
+
+
+socket.on('listOfUsersInRoom',({chatRoom,users})=>
+{
+
+    const html = Mustache.render(sidebarTemplate,{
+        chatRoom,
+        users
+    });
+
+    $chatSidebars.innerHTML= html;
 })
 
 

@@ -2,6 +2,7 @@ const users = []
 
 const addUser = ({ id, userName, chatRoom }) => {
 
+
     // cleaning the data
     userName = userName.trim().toLowerCase();
     chatRoom = chatRoom.trim().toLowerCase();
@@ -15,10 +16,13 @@ const addUser = ({ id, userName, chatRoom }) => {
 
     // check if user already exist in given chatRoom
 
-    const existingUser = users.find((user) => {
+
+    const existingUser = users.find((user) => 
+    {
         return user.userName == userName && user.chatRoom == chatRoom;
     })
 
+ 
     // validate user
     if (existingUser) {
 

@@ -17,6 +17,8 @@ const io = socketio(server);// simply socketio() will not work thus we need sock
 // now our server supports websockets
 
 
+var newBadWords = ['chutiye', 'chutiya', 'mc', 'bc', 'saale','harami','Kutta'];
+// you can other badwords also 
 
 
 
@@ -62,36 +64,49 @@ server.listen(port, () => {
     console.log(chalk.greenBright.underline('Sever is Running on port ' + port))
 })
 
-io.on('connection', (socket) => {
+io.on('connection', (socket) => 
+{
     console.log('new websocket connection');
 
     const filter = new Filter(); // to remove bad words
     // broadcast.emit will send message to all client connected to this socket except one who joined recently.
 
-    socket.on('join', ({ userName, chatRoom }, callback) => {
+    socket.on('join', ({ userName, chatRoom }, callback) => 
+    {
 
         socket.join(chatRoom);
 
         const { error, newUser } = addUser({ id: socket.id, userName, chatRoom });
 
-        if (error) {
+
+        if (error)
+         {
             return callback(error);
         }
 
-
-        socket.emit('message', generateMessage(capitalize(newUser.userName), "Welcome " + capitalize(newUser.userName) + " !"));
-        socket.broadcast.to(chatRoom).emit('message', generateMessage(capitalize(newUser.userName), capitalize(newUser.userName) + ' Has Joined !'));
+       const  currentUserName=capitalize(userName);
+        socket.emit('message', generateMessage(currentUserName, "Welcome " + currentUserName + " !"));
+        socket.broadcast.to(chatRoom).emit('message', generateMessage(currentUserName, currentUserName+ ' Has Joined !'));
         callback() // all ok no error
 
+io.to(chatRoom).emit('listOfUsersInRoom',
+{
+    chatRoom:chatRoom,
+    users:getUsersInRoom(newUser.chatRoom)
 
+})
 
     })
     socket.on('sendMessage', (inputMessage, callback) => {
-        filter.addWords('chutiye', 'chutiya', 'mc', 'bc', 'saale');
+        filter.addWords(... newBadWords);
         const currentUser = getUser(socket.id);
+        
+     
         if(currentUser)
         {
-            io.to(currentUser.chatRoom).emit('message', generateMessage(capitalize(currentUser.userName), filter.clean(inputMessage)))
+            var tempUserName=currentUser.userName;
+        const  currentUserName=capitalize(tempUserName);
+            io.to(currentUser.chatRoom).emit('message', generateMessage(currentUserName, filter.clean(inputMessage)))
             callback('sudhir pal');
         }
        
@@ -99,23 +114,41 @@ io.on('connection', (socket) => {
 
 
 
-    socket.on('disconnect', () => {
-        const newUser = removeUser(socket.id)
-        if (newUser.userName) {
-            io.to(newUser.chatRoom).emit('message', generateMessage(capitalize(newUser.userName), capitalize(newUser.userName) + ' Left The ' + capitalize(newUser.chatRoom) + ' chatRoom'))
+    socket.on('disconnect', () => 
+    {
+        const  newUser = removeUser(socket.id)
+      
+       
+        if (newUser.userName) 
+        {
+            var tempUserName=newUser.userName;
+            const  currentUserName=capitalize(tempUserName);
+        
+            io.to(newUser.chatRoom).emit('listOfUsersInRoom',
+{
+    chatRoom:newUser.chatRoom,
+    users:getUsersInRoom(newUser.chatRoom)
+
+})
+            io.to(newUser.chatRoom).emit('message', generateMessage(currentUserName, currentUserName + ' Left The ' + newUser.chatRoom+ ' chatRoom'))
         }
 
     })
 
 
     // receiving Geoloaction
-    socket.on('shareLocation', (location, callback) => {
-        const currentUser = getUser(socket.id);
+    socket.on('shareLocation', (location, callback) => 
+    {
+    const currentUser = getUser(socket.id);
+
+       
         if(currentUser)
-        {
+        { 
+            var tempUserName=currentUser.userName;
+            const  currentUserName=capitalize(tempUserName);
             const GoogleMap = 'https://www.google.com/maps?q=';
             callback('Your Location shared !')
-            io.to(currentUser.chatRoom).emit('sharingLocation', generateLocationMessage(capitalize(currentUser.userName), GoogleMap + location.latitude + ',' + location.longitude));
+            io.to(currentUser.chatRoom).emit('sharingLocation', generateLocationMessage(currentUserName, GoogleMap + location.latitude + ',' + location.longitude));
         }
    
     })
